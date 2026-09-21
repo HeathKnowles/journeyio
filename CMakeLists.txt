@@ -1,0 +1,49 @@
+cmake_minimum_required(VERSION 3.20)
+project(player_viz VERSION 1.0.0 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+find_package(Arrow REQUIRED)
+find_package(Parquet REQUIRED)
+find_package(httplib REQUIRED)
+find_package(nlohmann_json REQUIRED)
+find_package(flatbuffers REQUIRED)
+
+set(FLATC ${CMAKE_CURRENT_BINARY_DIR}/../build/vcpkg_installed/x64-linux/tools/flatbuffers/flatc)
+
+set(FBS_SCHEMA ${CMAKE_CURRENT_SOURCE_DIR}/schemas/api.fbs)
+set(FBS_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/api_generated.h)
+
+add_custom_command(
+    OUTPUT ${FBS_OUTPUT}
+    COMMAND ${FLATC} --cpp --scoped-enums -o ${CMAKE_CURRENT_BINARY_DIR} ${FBS_SCHEMA}
+    DEPENDS ${FBS_SCHEMA}
+    COMMENT "Generating FlatBuffers C++ headers from api.fbs"
+)
+
+add_executable(player_viz
+    src/main.cpp
+    src/data_loader.cpp
+    src/api.cpp
+    src/flatbuf_serializer.cpp
+    ${FBS_OUTPUT}
+)
+
+add_custom_target(flatbuffers_gen DEPENDS ${FBS_OUTPUT})
+add_dependencies(player_viz flatbuffers_gen)
+
+target_link_libraries(player_viz PRIVATE
+    "$<IF:$<BOOL:${ARROW_BUILD_STATIC}>,Arrow::arrow_static,Arrow::arrow_shared>"
+    "$<IF:$<BOOL:${ARROW_BUILD_STATIC}>,Parquet::parquet_static,Parquet::parquet_shared>"
+    httplib::httplib
+    nlohmann_json::nlohmann_json
+    flatbuffers::flatbuffers
+)
+
+target_include_directories(player_viz PRIVATE
+    src
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${FLATBUFFERS_INCLUDE_DIR}
+)

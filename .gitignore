@@ -1,0 +1,18 @@
+# Build directories
+build/
+bin/
+obj/
+
+# Node dependencies and dist
+frontend/node_modules/
+frontend/dist/
+
+# System / Editor files
+.DS_Store
+*.log
+*.swp
+*.ninja_deps
+*.ninja_log
+compile_commands.json
+.vscode/
+.idea/

@@ -1,0 +1,108 @@
+namespace PlayerViz;
+
+enum EventType : byte {
+  Position = 0,
+  BotPosition = 1,
+  Kill = 2,
+  Killed = 3,
+  BotKill = 4,
+  BotKilled = 5,
+  KilledByStorm = 6,
+  Loot = 7,
+  Unknown = 8
+}
+
+table Event {
+  user_id:string;
+  match_id:string;
+  map_id:string;
+  x:float;
+  y:float;
+  z:float;
+  ts:long;
+  event:EventType;
+}
+
+table PlayerSummary {
+  user_id:string;
+  is_human:bool;
+  event_count:long;
+  first_ts:long;
+  last_ts:long;
+  death_event:EventType;
+}
+
+table MatchSummary {
+  match_id:string;
+  map_id:string;
+  date:string;
+  start_ts:long;
+  end_ts:long;
+  human_count:int;
+  bot_count:int;
+  total_events:int;
+  human_ids:[string];
+}
+
+table MatchDetail {
+  match_id:string;
+  map_id:string;
+  date:string;
+  events:[Event];
+  players:[PlayerSummary];
+  duration_ms:long;
+}
+
+table HeatmapCell {
+  px:int;
+  py:int;
+  intensity:float;
+}
+
+table PrecomputedHeatmap {
+  map_id:string;
+  event_type:string;
+  grid_size:int;
+  cells:[HeatmapCell];
+}
+
+table MapConfig {
+  name:string;
+  scale:float;
+  origin_x:float;
+  origin_z:float;
+}
+
+table StatsResponse {
+  total_events:long;
+  total_matches:int;
+  total_human_players:int;
+  total_bot_players:int;
+  dates:[string];
+  maps:[string];
+}
+
+table MapsResponse {
+  maps:[MapConfig];
+}
+
+table DatesResponse {
+  dates:[string];
+}
+
+table MatchesResponse {
+  matches:[MatchSummary];
+}
+
+table HeatmapResponse {
+  map_id:string;
+  event_type:string;
+  grid_size:int;
+  cells:[HeatmapCell];
+}
+
+table AllHeatmapsResponse {
+  heatmaps:[PrecomputedHeatmap];
+}
+
+root_type StatsResponse;

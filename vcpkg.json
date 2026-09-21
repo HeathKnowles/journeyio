@@ -1,0 +1,13 @@
+{
+  "name": "player-viz",
+  "version-string": "1.0.0",
+  "dependencies": [
+    "arrow",
+    {
+      "name": "cpp-httplib",
+      "features": ["zlib"]
+    },
+    "nlohmann-json",
+    "flatbuffers"
+  ]
+}
