@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(player_viz VERSION 1.0.0 LANGUAGES CXX)
+project(journeyio VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -23,7 +23,7 @@ add_custom_command(
     COMMENT "Generating FlatBuffers C++ headers from api.fbs"
 )
 
-add_executable(player_viz
+add_executable(journeyio
     src/main.cpp
     src/data_loader.cpp
     src/api.cpp
@@ -32,9 +32,9 @@ add_executable(player_viz
 )
 
 add_custom_target(flatbuffers_gen DEPENDS ${FBS_OUTPUT})
-add_dependencies(player_viz flatbuffers_gen)
+add_dependencies(journeyio flatbuffers_gen)
 
-target_link_libraries(player_viz PRIVATE
+target_link_libraries(journeyio PRIVATE
     "$<IF:$<BOOL:${ARROW_BUILD_STATIC}>,Arrow::arrow_static,Arrow::arrow_shared>"
     "$<IF:$<BOOL:${ARROW_BUILD_STATIC}>,Parquet::parquet_static,Parquet::parquet_shared>"
     httplib::httplib
@@ -42,7 +42,7 @@ target_link_libraries(player_viz PRIVATE
     flatbuffers::flatbuffers
 )
 
-target_include_directories(player_viz PRIVATE
+target_include_directories(journeyio PRIVATE
     src
     ${CMAKE_CURRENT_BINARY_DIR}
     ${FLATBUFFERS_INCLUDE_DIR}

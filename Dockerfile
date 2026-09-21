@@ -59,11 +59,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 WORKDIR /app
 
 # Copy binary and static assets
-COPY --from=backend-builder /app/build/player_viz ./player_viz
+COPY --from=backend-builder /app/build/journeyio ./journeyio
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
 COPY player_data ./player_data
 
 ENV PORT=8080
 EXPOSE 8080
 
-CMD ["./player_viz", "--data", "./player_data", "--static", "./frontend/dist", "--port", "8080"]
+CMD ["./journeyio", "--data", "./player_data", "--static", "./frontend/dist", "--port", "8080"]

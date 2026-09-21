@@ -108,7 +108,7 @@ ninja -C build
 
 ### 3. Run the Application
 ```bash
-./build/player_viz --data ../player_data --static ./frontend/dist --port 8080
+./build/journeyio --data ../player_data --static ./frontend/dist --port 8080
 ```
 Open **`http://localhost:8080`** in your browser.
 
@@ -163,6 +163,6 @@ docker run -p 8080:8080 lila-player-viz
 
 ## 📄 Associated Documentation
 
-- 📐 [**ARCHITECTURE.md**](file:///home/heathknowles/Documents/Code/Misc/player_viz/ARCHITECTURE.md) — Comprehensive 1-page architecture breakdown, data flow, Leaflet coordinate math, assumptions, and tradeoffs table.
-- 💡 [**INSIGHTS.md**](file:///home/heathknowles/Documents/Code/Misc/player_viz/INSIGHTS.md) — Three deep, data-backed level design discoveries (Lockdown storm trap, solo-PvE bot reality, and Ambrose Valley loot highways).
+- 📐 [**ARCHITECTURE.md**](file:///home/heathknowles/Documents/Code/Misc/journeyio/ARCHITECTURE.md) — Comprehensive 1-page architecture breakdown, data flow, Leaflet coordinate math, assumptions, and tradeoffs table.
+- 💡 [**INSIGHTS.md**](file:///home/heathknowles/Documents/Code/Misc/journeyio/INSIGHTS.md) — Three deep, data-backed level design discoveries (Lockdown storm trap, solo-PvE bot reality, and Ambrose Valley loot highways).
 - 📜 [**player_data/README.md**](file:///home/heathknowles/Documents/Code/Misc/player_data/README.md) — Telemetry format specifications, Parquet column schemas, and event dictionary.
