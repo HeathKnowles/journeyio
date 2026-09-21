@@ -19,20 +19,24 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ninja-build \
     git \
     curl \
+    python3 \
+    flex \
+    bison \
     zip \
     unzip \
     tar \
     pkg-config \
     ca-certificates \
-    libarrow-dev \
-    libparquet-dev \
-    nlohmann-json3-dev \
-    libflatbuffers-dev \
-    flatbuffers-compiler \
-    zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
+RUN git clone --depth 1 https://github.com/microsoft/vcpkg.git /opt/vcpkg \
+    && /opt/vcpkg/bootstrap-vcpkg.sh -disableMetrics
+
 WORKDIR /app
+
+# Install manifest dependencies before copying source for better layer caching.
+COPY vcpkg.json ./
+RUN /opt/vcpkg/vcpkg install --triplet x64-linux
 
 # Copy source and CMake files
 COPY CMakeLists.txt ./
@@ -40,7 +44,10 @@ COPY schemas/ ./schemas/
 COPY src/ ./src/
 
 # Compile with CMake and Ninja
-RUN cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+RUN cmake -B build -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_TOOLCHAIN_FILE=/opt/vcpkg/scripts/buildsystems/vcpkg.cmake \
+    -DVCPKG_TARGET_TRIPLET=x64-linux
 RUN ninja -C build
 
 # =======================================================
@@ -49,9 +56,6 @@ RUN ninja -C build
 FROM debian:bookworm-slim AS runtime
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    libarrow1100 \
-    libparquet1100 \
-    libflatbuffers2 \
     zlib1g \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
@@ -61,8 +65,10 @@ WORKDIR /app
 # Copy binary and static assets
 COPY --from=backend-builder /app/build/journeyio ./journeyio
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist
+COPY --from=backend-builder /app/build/vcpkg_installed/x64-linux/lib ./lib
 
 ENV PORT=8080
+ENV LD_LIBRARY_PATH=/app/lib
 EXPOSE 8080
 
 CMD ["sh", "-c", "./journeyio --data /app/player_data --static /app/frontend/dist --port ${PORT:-8080}"]

@@ -11,14 +11,18 @@ find_package(httplib REQUIRED)
 find_package(nlohmann_json REQUIRED)
 find_package(flatbuffers REQUIRED)
 
-set(FLATC ${CMAKE_CURRENT_BINARY_DIR}/../build/vcpkg_installed/x64-linux/tools/flatbuffers/flatc)
+find_program(FLATC_EXECUTABLE
+    NAMES flatc
+    HINTS "${CMAKE_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/tools/flatbuffers"
+    REQUIRED
+)
 
 set(FBS_SCHEMA ${CMAKE_CURRENT_SOURCE_DIR}/schemas/api.fbs)
 set(FBS_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/api_generated.h)
 
 add_custom_command(
     OUTPUT ${FBS_OUTPUT}
-    COMMAND ${FLATC} --cpp --scoped-enums -o ${CMAKE_CURRENT_BINARY_DIR} ${FBS_SCHEMA}
+    COMMAND ${FLATC_EXECUTABLE} --cpp --scoped-enums -o ${CMAKE_CURRENT_BINARY_DIR} ${FBS_SCHEMA}
     DEPENDS ${FBS_SCHEMA}
     COMMENT "Generating FlatBuffers C++ headers from api.fbs"
 )
