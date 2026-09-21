@@ -16,3 +16,4 @@ frontend/dist/
 compile_commands.json
 .vscode/
 .idea/
+vcpkg_installed/
